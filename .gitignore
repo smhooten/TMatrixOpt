@@ -7,3 +7,5 @@
 *eigen*
 *.swp
 *.csv
+build/*
+dist/*

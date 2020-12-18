@@ -128,6 +128,86 @@ void solve(double photon_energy,
     }
 };
 
+void solve_forward(double photon_energy, 
+                   double theta, 
+                   int len_d, 
+                   int len_idx,
+                   double* d_i, 
+                   std::complex<double>* n_i, 
+                   int* idx_i, 
+                   complex64* M_TE_o,
+                   complex64* M_TM_o)
+    {
+
+    std::complex<double> j(0.0,1.0);
+    double h = 6.626070040e-34;
+    double c = 299792458.0;
+    double wavelength = h * c / photon_energy;
+
+    ArrayXcd n(len_d);
+    ArrayXd d(len_d);
+    ArrayXi idx(len_idx);
+
+    for(int i = 0; i < len_d; ++i) {
+        n(i) = n_i[i];
+        d(i) = d_i[i];
+        if(i<len_idx) {
+            idx(i) = idx_i[i];
+        };
+    };
+
+    ArrayXcd angles(len_d);
+    angles(0) = theta;
+
+    for(int i = 1; i < len_d; ++i) {
+        angles(i) = std::asin(n(i-1) * std::sin(angles(i-1)) / n(i));
+    };
+
+    ArrayXcd Kx = 2*M_PI*n/wavelength*angles.cos();
+    ArrayXcd L = Kx(seq(1,last))/Kx(seq(0,last-1));
+
+    Matrix2cd M_TE;
+    Matrix2cd M_TM;
+    M_TE << 1.0, 0.0,
+            0.0, 1.0;
+    M_TM << 1.0, 0.0,
+            0.0, 1.0;
+
+    Matrix2cd T_TE;
+    Matrix2cd T_TM;
+    Matrix2cd P;
+
+    for(int i = 0; i < len_d-1; ++i) {
+        T_TE(0,0) = 1.0+L(i); 
+        T_TE(0,1) = 1.0-L(i); 
+        T_TE(1,0) = 1.0-L(i); 
+        T_TE(1,1) = 1.0+L(i); 
+        T_TE *= 0.5;
+
+        T_TM(0,0) = L(i)*n(i)/n(i+1)+n(i+1)/n(i);
+        T_TM(0,1) = L(i)*n(i)/n(i+1)-n(i+1)/n(i);
+        T_TM(1,0) = L(i)*n(i)/n(i+1)-n(i+1)/n(i);
+        T_TM(1,1) = L(i)*n(i)/n(i+1)+n(i+1)/n(i);
+        T_TM *= 0.5;
+
+        P(0,0) = exp(-j*Kx(i+1)*d(i+1));
+        P(1,0) = 0.0;
+        P(0,1) = 0.0;
+        P(1,1) = exp(j*Kx(i+1)*d(i+1));
+
+        M_TE = M_TE * T_TE * P;
+        M_TM = M_TM * T_TM * P;
+    }
+
+    for(int m=0; m<2; ++m) {
+        for(int n=0; n<2; ++n) {
+            int ind1 = m*2 + n;
+            M_TE_o[ind1] = M_TE(m,n);
+            M_TM_o[ind1] = M_TM(m,n);
+        }
+    }
+};
+
 /*
 void reflectivity_grads(std::complex<double>* rTE,
                         std::complex<double>* rTM,

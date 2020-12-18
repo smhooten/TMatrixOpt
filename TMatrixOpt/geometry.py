@@ -9,7 +9,7 @@ import csv
 import copy
 import numpy as np
 
-from physical_constants import *
+from .physical_constants import *
 
 class Material:
     """

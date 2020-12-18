@@ -87,6 +87,25 @@ class Reflectivity(MeritFunction):
     # USER FUNCTION SIGNATURE SHOULD BE
     # def calc_grads(dRTE_dp, dRTM_dp)
 
+class Reflectivity_FORWARD_ONLY(MeritFunction):
+    return_results = ['rTE',
+                      'rTM']
+
+    @staticmethod
+    def calc_fom(rTE, rTM):
+        RTE = (rTE*np.conj(rTE)).real
+        RTM = (rTM*np.conj(rTM)).real
+        return {'RTE': RTE, 'RTM': RTM}
+
+    # USER FUNCTION SIGNATURE SHOULD BE
+    # def calc_fom(RTE, RTM)
+
+    @staticmethod
+    def calc_grads():
+        pass
+
+
+### CURRENTLY NOT WORKING BELOW ###
 class Transmission(MeritFunction):
     return_results = ['rTE',
                       'rTM',

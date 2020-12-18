@@ -1,13 +1,13 @@
 import numpy as np
 from math import pi
 from abc import ABCMeta, abstractmethod
-from parallel_toolkit import MPI, COMM, RANK, SIZE
 from scipy.optimize import minimize
 from scipy.optimize import OptimizeResult
 from scipy.optimize import basinhopping
+from .parallel_toolkit import MPI, COMM, RANK, SIZE
 
-class Optimizer(object):
-    class RunCommands(object):
+class Optimizer:
+    class RunCommands:
         """Run command codes used during message passing.
 
         We need a way to signal the non-master nodes to perform different

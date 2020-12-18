@@ -1,7 +1,6 @@
 """
 Module that provides useful tools for implementing parallel MPI operations.
 """
-
 import numpy as np
 from mpi4py import MPI
 

@@ -22,7 +22,7 @@ LDFLAGS = -lpthread
 
 all: Solve.o solve.cpp solve.hpp
 	${CC} ${SHARED_FLAG} -fPIC -o Solve.so Solve.o ${LDFLAGS}
-	cp Solve.so ../
+	cp Solve.so ../TMatrixOpt/
 
 Solve.o: solve.cpp solve.hpp
 	${CC} -c -fPIC solve.cpp ${CXXFLAGS} -o Solve.o ${INCLUDES}

@@ -26,6 +26,17 @@ lib.solve.argtypes = [c_double,
                       c_complex_p]
 lib.solve.restype = None
 
+lib.solve_forward.argtypes = [c_double,
+                              c_double,
+                              c_int,
+                              c_int,
+                              c_double_p,
+                              c_complex_p,
+                              c_int_p,
+                              c_complex_p,
+                              c_complex_p]
+lib.solve_forward.restype = None
+
 """
 lib.reflectivity_grads.argtypes = [c_complex_p,
                                    c_complex_p,
