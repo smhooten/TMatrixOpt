@@ -1,0 +1,12 @@
+To install, use the following commands
+----------------------------------------------
+cd ./src
+git clone https://gitlab.com/libeigen/eigen.git
+make
+----------------------------------------------
+
+Run a test:
+----------------------------------------------
+Navigate back to top directory
+mpirun -n 30 python3 test_system.py
+----------------------------------------------

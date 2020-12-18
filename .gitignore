@@ -1,0 +1,9 @@
+*.o
+*.so
+*.pyc
+*.egg-info*
+*.egg_info*
+*.mat
+*eigen*
+*.swp
+*.csv
