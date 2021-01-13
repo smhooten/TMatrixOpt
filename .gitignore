@@ -9,3 +9,4 @@
 *.csv
 build/*
 dist/*
+test.py

@@ -1,50 +1,24 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
 
-def GaAsAbsorpCoeff(E):
-    # inputs
-    # E - photon energy
-    # alpha0 = inverse of absorption depth in GaAs, in 1/m,
-    # E0 - Urbach energy
-    # Eprime - above-band edge parameter
-    
-    # outputs
-    # alpha - absorption coefficient in units of 1/m
-    q = 1.602e-19; # electron charge
-    Eg = 1.42*q # bandgap
-    alpha0 = 8e5
-    EPrime = 140e-3*q
-    E0 = 6.7e-3*q
-    
-    
-    alpha = np.zeros((E.shape))
-    alpha[E<=Eg] = alpha0*np.exp((E[E<=Eg]-Eg)/E0)
-    alpha[E>Eg] = alpha0*(1+(E[E>Eg]-Eg)/EPrime)
-    
-    return alpha
-
-def PlanckPhotonCounts(E,V,n,T):
-    
-    
-    #Inputs
-    # E - photon energy
-    # V - applied bias
-    # n - refractive index
-    # T - temperature of the object
-    
-    #Ouputs
-    # PhotonFlux - #Photon Nos/(m^2*s*J)
-    
-    q = 1.602e-19
-    c = 3e8
-    h = 6.626e-34
-    Kb = 1.38e-23
-    
-    PhotonFlux = 8*np.pi*n**2/(c**2*h**3)*E**2*np.exp((q*V-E)/(Kb*T))
-    
-    return PhotonFlux
-
 class MeritFunction:
+    """
+    Define general framework for an intermediate MeritFunction
+    class. Any MeritFunction should inherit this base class.
+    
+    A MeritFunction class simplifies the user's responsibility 
+    to handle the TMatrixOpt output (at an insignificant speed
+    cost). The meanings of the Fresnel coefficients and the
+    program's matrix elements may be opaque to a general end
+    user, so these classes sidestep that responsible and only
+    provide the quantities of interest to the user. For example,
+    the Reflectivity class will automatically calculate the
+    Power Reflection Coefficient as a function of user provided
+    incident photon energies and angles, as well as its derivative with
+    respect to the design parameters. Therefore, the user need
+    only define there overall figure of merit and system derivative
+    with respect to R.
+    """
     @abstractmethod
     def calc_fom(**results):
         pass
@@ -105,6 +79,7 @@ class Reflectivity_FORWARD_ONLY(MeritFunction):
         pass
 
 
+
 ### CURRENTLY NOT WORKING BELOW ###
 class Transmission(MeritFunction):
     return_results = ['rTE',
@@ -140,34 +115,45 @@ class Transmission(MeritFunction):
     # USER FUNCTION SIGNATURE SHOULD BE
     # def calc_grads(dTTE_dp, dTTM_dp)
 
-"""
-    @staticmethod
-    def calc_grads_old(rTE, rTM, tTE, tTM, dM11_dp_TE, dM11_dp_TM,
-                   dM21_dp_TE, dM21_dp_TM):
+def GaAsAbsorpCoeff(E):
+    # inputs
+    # E - photon energy
+    # alpha0 = inverse of absorption depth in GaAs, in 1/m,
+    # E0 - Urbach energy
+    # Eprime - above-band edge parameter
+    
+    # outputs
+    # alpha - absorption coefficient in units of 1/m
+    q = 1.602e-19; # electron charge
+    Eg = 1.42*q # bandgap
+    alpha0 = 8e5
+    EPrime = 140e-3*q
+    E0 = 6.7e-3*q
+    
+    
+    alpha = np.zeros((E.shape))
+    alpha[E<=Eg] = alpha0*np.exp((E[E<=Eg]-Eg)/E0)
+    alpha[E>Eg] = alpha0*(1+(E[E>Eg]-Eg)/EPrime)
+    
+    return alpha
 
-        #drTE_dp = tTE * dM21_dp_TE - rTE * tTE * dM11_dp_TE
-        #drTM_dp = tTM * dM21_dp_TM - rTM * tTM * dM11_dp_TM
-
-        #dRTE_dp = 2*(np.conj(rTE)*drTE_dp).real
-        #dRTM_dp = 2*(np.conj(rTM)*drTM_dp).real
-        len_pe, len_theta, len_par = dM11_dp_TE.shape
-
-        dRTE_dp = np.empty(len_pe*len_theta*len_par, dtype=np.double)
-        dRTM_dp = np.empty(len_pe*len_theta*len_par, dtype=np.double)
-
-        lib.reflectivity_grads(rTE.ravel().astype(np.complex128),
-                               rTM.ravel().astype(np.complex128),
-                               tTE.ravel().astype(np.complex128),
-                               tTM.ravel().astype(np.complex128),
-                               dM11_dp_TE.ravel().astype(np.complex128),
-                               dM11_dp_TM.ravel().astype(np.complex128),
-                               dM21_dp_TE.ravel().astype(np.complex128),
-                               dM21_dp_TM.ravel().astype(np.complex128),
-                               len_pe,
-                               len_theta,
-                               len_par,
-                               dRTE_dp,
-                               dRTM_dp)
-
-        return {'dRTE_dp': dRTE_dp.reshape((len_pe, len_theta, len_par)), 'dRTM_dp': dRTM_dp.reshape((len_pe, len_theta, len_par))}
-"""
+def PlanckPhotonCounts(E,V,n,T):
+    
+    
+    #Inputs
+    # E - photon energy
+    # V - applied bias
+    # n - refractive index
+    # T - temperature of the object
+    
+    #Ouputs
+    # PhotonFlux - #Photon Nos/(m^2*s*J)
+    
+    q = 1.602e-19
+    c = 3e8
+    h = 6.626e-34
+    Kb = 1.38e-23
+    
+    PhotonFlux = 8*np.pi*n**2/(c**2*h**3)*E**2*np.exp((q*V-E)/(Kb*T))
+    
+    return PhotonFlux

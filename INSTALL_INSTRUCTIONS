@@ -1,12 +1,47 @@
-To install, use the following commands
-----------------------------------------------
-cd ./src
+TMatrixOpt Installation Instructions
+
+Ensure you are using Python 3.6+:
+---------------------------------------------------
+python --version
+---------------------------------------------------
+
+
+Clone repo:
+---------------------------------------------------
+git clone https://github.com/smhooten/TMatrixOpt.git
+cd TMatrixOpt
+---------------------------------------------------
+
+
+Ensure you have a working installation of OpenMP,
+installation instructions for CentOS 7:
+---------------------------------------------------
+sudo yum install epel-release
+sudo yum groupinstall "Development Tools"
+sudo yum install openmpi openmpi-devel python-pip python-devel tkinter
+module load mpi/openmpi-x86_64
+---------------------------------------------------
+
+
+Install Python dependencies (includes mpi4py):
+---------------------------------------------------
+pip install -r requirements.txt --user
+---------------------------------------------------
+
+
+Download Eigen and Compile C++ source files:
+---------------------------------------------------
+cd ./src/
 git clone https://gitlab.com/libeigen/eigen.git
 make
-----------------------------------------------
+---------------------------------------------------
+NOTE (advanced): you can change the EIGEN_DIR variable
+in the Makefile if you already have an eigen install
+elsewhere
 
-Run a test:
-----------------------------------------------
-Navigate back to top directory
-mpirun -n 30 python3 test_system.py
-----------------------------------------------
+
+Run setup.py
+---------------------------------------------------
+cd ..
+python setup.py install --user
+---------------------------------------------------

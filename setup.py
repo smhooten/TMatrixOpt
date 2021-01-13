@@ -13,6 +13,7 @@ setup(
    author_email='shooten@eecs.berkeley.edu',
    url="https://github.com/smhooten/TMatrixOpt",
    packages=['TMatrixOpt'],
+   package_data={'TMatrixOpt':['*.so']},
    #install_requires=['numpy', 'scipy'],
    zip_safe=False,
 )

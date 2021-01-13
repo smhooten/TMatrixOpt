@@ -32,4 +32,3 @@ clean:
 	rm -f ./*.so
 	rm -f ../*.so
 	rm -f ../*.pyc
-

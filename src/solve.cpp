@@ -207,39 +207,3 @@ void solve_forward(double photon_energy,
         }
     }
 };
-
-/*
-void reflectivity_grads(std::complex<double>* rTE,
-                        std::complex<double>* rTM,
-                        std::complex<double>* tTE,
-                        std::complex<double>* tTM,
-                        std::complex<double>* dM11_dp_TE,
-                        std::complex<double>* dM11_dp_TM,
-                        std::complex<double>* dM21_dp_TE,
-                        std::complex<double>* dM21_dp_TM,
-                        int len_pe,
-                        int len_theta,
-                        int len_par,
-                        double* dRTE_dp,
-                        double* dRTM_dp) {
-
-
-    int size = len_pe * len_theta * len_par;
-    std::complex<double> drTE_dp[size];
-    std::complex<double> drTM_dp[size];
-    for(int i = 0; i<len_pe; ++i) {
-        for(int j = 0; j<len_theta; ++j) {
-            int ind1 = len_theta*i + j;
-            for(int k = 0; k<len_par; ++k) {
-                int ind2 = len_theta*len_par*i + len_par*j + k;
-                drTE_dp[ind2] = tTE[ind1] * dM21_dp_TE[ind2] - rTE[ind1] * tTE[ind1] * dM11_dp_TE[ind2];
-                drTM_dp[ind2] = tTM[ind1] * dM21_dp_TM[ind2] - rTM[ind1] * tTM[ind1] * dM11_dp_TM[ind2];
-                dRTE_dp[ind2] = (2.0 * std::conj(rTE[ind1]) * drTE_dp[ind2]).real();
-                dRTM_dp[ind2] = (2.0 * std::conj(rTM[ind1]) * drTM_dp[ind2]).real();
-
-            };
-        };
-    };
-    
-};
-*/

@@ -175,7 +175,7 @@ class basin_hopping(Optimizer):
         if self.additional_options is not None:
             options = self.additional_options.copy()
             options.update({'maxiter':self.Nmax,
-                            'disp': self.Nmax})
+                            'disp': self.scipy_verbose})
         else:
             options = {'maxiter':self.Nmax, 
                        'disp': self.scipy_verbose}
@@ -183,7 +183,7 @@ class basin_hopping(Optimizer):
         minimizer_kwargs = dict(method=self.opt_method, jac=self.__gradient, callback=self.callback, 
                                 tol=self.tol, options=options)
 
-        result = basinhopping(self.__fom, self.p0, niter=200, T=0.5, stepsize=1.0e-7, minimizer_kwargs = minimizer_kwargs)
+        result = basinhopping(self.__fom, self.p0, niter=40, T=0.01, stepsize=0.05, minimizer_kwargs = minimizer_kwargs)
         #result = basinhopping(self.__fom, self.p0, niter=10, T=0.3, stepsize=0.01, minimizer_kwargs = minimizer_kwargs)
 
         command = self.RunCommands.EXIT

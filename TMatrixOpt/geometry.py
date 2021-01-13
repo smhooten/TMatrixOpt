@@ -22,36 +22,57 @@ class Material:
     If refractive index is complex, the data file should include
     3 columns: energy, n, k. Otherwise use two columns.
     """
-    def __init__(self, data_file):
-        self.data_file = data_file
-        photon_energy = []
-        n = []
-        k = []
-        with open(data_file) as csvfile:
-            reader = csv.reader(csvfile, delimiter=',')
-            for row in reader:
-                photon_energy.append(float(row[0]))
-                n.append(float(row[1]))
-                try:
-                    k.append(float(row[2]))
-                except:
-                    pass
-
-        photon_energy = np.array(photon_energy)
-        sorting_inds = np.argsort(photon_energy)
-        self.photon_energy = photon_energy[sorting_inds]
-        n = np.array(n, dtype=PRECISION)[sorting_inds]
-        if k:
-            k = np.array(k, dtype=PRECISION)[sorting_inds]
-            self.n = n + 1j*k
-        else:
-            self.n = n
+    def __init__(self, photon_energy, nk):
+        self.photon_energy = photon_energy
+        self.n = nk
 
     def get_index(self, PEq):
         return np.interp(PEq, self.photon_energy, self.n)
 
     def __call__(self, PEq):
         return self.get_index(PEq)
+
+#class Material:
+#    """
+#    Allows the user to define dispersive materials to feed into
+#    the solver. The user should provide a csv data_file that gives
+#    the material (complex) refractive index as a function of photon
+#    energy. The solver will linearly interpolate the data to find
+#    the (complex) refractive index at undefined photon energies.
+#
+#    If refractive index is complex, the data file should include
+#    3 columns: energy, n, k. Otherwise use two columns.
+#    """
+#    def __init__(self, data_file):
+#        self.data_file = data_file
+#        photon_energy = []
+#        n = []
+#        k = []
+#        with open(data_file) as csvfile:
+#            reader = csv.reader(csvfile, delimiter=',')
+#            for row in reader:
+#                photon_energy.append(float(row[0]))
+#                n.append(float(row[1]))
+#                try:
+#                    k.append(float(row[2]))
+#                except:
+#                    pass
+#
+#        photon_energy = np.array(photon_energy)
+#        sorting_inds = np.argsort(photon_energy)
+#        self.photon_energy = photon_energy[sorting_inds]
+#        n = np.array(n, dtype=PRECISION)[sorting_inds]
+#        if k:
+#            k = np.array(k, dtype=PRECISION)[sorting_inds]
+#            self.n = n + 1j*k
+#        else:
+#            self.n = n
+#
+#    def get_index(self, PEq):
+#        return np.interp(PEq, self.photon_energy, self.n)
+#
+#    def __call__(self, PEq):
+#        return self.get_index(PEq)
 
 class Geometry:
     """

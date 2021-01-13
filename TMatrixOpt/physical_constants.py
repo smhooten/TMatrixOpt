@@ -10,5 +10,5 @@ Kb = 1.38064852e-23;
 # Define precision of complex calculations
 # in the TMatrix solver here
 ##########################################
-PRECISION = np.complex64
+PRECISION = np.complex128
 ##########################################

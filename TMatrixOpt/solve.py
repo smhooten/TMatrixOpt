@@ -288,7 +288,8 @@ class TMatrix:
 
         if RANK == 0:
              # Calculate relative error
-             reldiff = np.mean(np.abs((grads_fd - grads0)/grads_fd))
+             #reldiff = np.mean(np.abs((grads_fd - grads0)/grads_fd))
+             reldiff = np.sum(np.abs(grads_fd - grads0))/np.sum(np.abs(grads_fd))
              print('Relative error between finite difference and calculated gradient: %s' % reldiff)
 
              # plot
