@@ -82,14 +82,14 @@ class LayerStack(TMatrix):
 
         f = plt.figure()
         ax1 = f.add_subplot(121)
-        im1 = ax1.imshow(self.RTE, origin='lower', cmap='hot', vmin=0.0, vmax=1.0, extent=extent, aspect='auto')
+        im1 = ax1.imshow(self.RTE, origin='lower', cmap='hot', vmin=0.9, vmax=1.0, extent=extent, aspect='auto')
         ax1.set_title('TE Reflectivity')
         ax1.set_xlabel('Incident Angle (Degrees)')
         ax1.set_ylabel('Photon Energy (eV)')
         f.colorbar(im1, ax=ax1)
 
         ax2 = f.add_subplot(122)
-        im2 = ax2.imshow(self.RTM, origin='lower', cmap='hot', vmin=0.0, vmax=1.0, extent=extent, aspect='auto')
+        im2 = ax2.imshow(self.RTM, origin='lower', cmap='hot', vmin=0.9, vmax=1.0, extent=extent, aspect='auto')
         ax2.set_title('TM Reflectivity')
         ax2.set_xlabel('Incident Angle (Degrees)')
         ax2.set_ylabel('Photon Energy (eV)')
@@ -129,18 +129,25 @@ class LayerStack(TMatrix):
 
 if __name__ == '__main__':
     import time
+    nair = 1.0
+    #nsio2 = 1.4 + 0.01j
+    #nsi = 3.5 + 0.01j
+    nsio2 = 1.4
+    nsi = 3.5
+    nau = 0.5+11*1j
 
-    air_front = geometry.Layer('air_front', 0.0, 1.0, False)
-    superstrate = geometry.Layer('superstrate', 0.4668e-6, 3.5, False)
-    #layer2 = geometry.LinearChirp('linearchirp', 0.1, 0.74, 6, 1.6, 3.5, 1.6, 3.5, False)
-    layer2 = geometry.DiscreteChirp('linearchirp', 0.45, 20, 1.6+0.01j, 3.5, 1.6, 3.5, False)
+    air_front = geometry.Layer('air_front', 0.0, nair, False)
+    #discretechirp = geometry.DiscreteChirp('discretechirp', 0.45, 10, nsi, nsio2, 3.5, 1.4, False)
+    discretechirp = geometry.LinearChirp('discretechirp',0.2, 0.6, 5, nsi, nsio2, 3.5, 1.4, False)
     metal_back = geometry.Layer('metal_back', 0.5e-6, 0.5+11*1j, False)
-    air_back = geometry.Layer('air_back', 0.0, 1.0, False)
+    air_back = geometry.Layer('air_back', 0.0, nair, False)
     #layers = [air_front, superstrate, layer2, metal_back, air_back]
-    layers = [air_front, superstrate, layer2, air_back]
+    #layers = [air_front, superstrate, layer2, air_back]
+    #layers = [air_front, discretechirp, air_back]
+    layers = [air_front, discretechirp, metal_back, air_back]
     #layers = [air_front, layer2, air_back]
    
-    photon_energies = np.linspace(0.1, 0.74, num=6400)
+    photon_energies = np.linspace(0.1, 0.74, num=1281)
     thetas = np.linspace(0,90, num=181)
     stack = LayerStack(photon_energies, thetas, layers)
     stack.build()

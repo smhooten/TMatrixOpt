@@ -1,0 +1,45 @@
+matlab("disp('init matlab')");
+
+pe = linspace(0.1, 0.74, 6401);
+ia = linspace(0.0, 90.0, 361);
+
+f = pe*e/h;
+
+d = [0.00000000e+00;
+    4.42800705e-07;
+    1.10700176e-06; 
+    3.69000588e-07;
+    9.22501469e-07; 
+    2.95200470e-07; 
+    7.38001175e-07; 
+    2.21400353e-07;
+    5.53500882e-07; 
+    1.47600235e-07; 
+    3.69000588e-07;
+    0.00000000e+00];
+
+nair = 1.0;
+nsio2 = 1.4+1i*0.05;
+nsi = 3.5+1i*0.05;
+
+n = [nair;
+     nsi;
+     nsio2;
+     nsi;
+     nsio2;
+     nsi;
+     nsio2;
+     nsi;
+     nsio2;
+     nsi;
+     nsio2;
+     nair];
+
+matlab('tic');
+RT = stackrt(n,d,f,ia);
+Rp = RT.Rp;
+Rs = RT.Rs;
+Tp = RT.Tp;
+Ts = RT.Ts;
+matlab('elapsed=toc');
+matlab('disp(elapsed)');
