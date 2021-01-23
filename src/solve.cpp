@@ -207,3 +207,65 @@ void solve_forward(double photon_energy,
         }
     }
 };
+
+
+void solve_BETA(double* photon_energy, 
+                double* theta, 
+                int len_d, 
+                int len_idx,
+                int len_sim,
+                double* d_i, 
+                std::complex<double>* n_i, 
+                int* idx_i, 
+                complex64* M_TE_o,
+                complex64* M_TM_o,
+                complex64* dM_dd_TE_o,
+                complex64* dM_dd_TM_o) 
+    {
+
+    complex64 M_TE_oo[4];
+    complex64 M_TM_oo[4];
+    complex64 dM_dd_TE_oo[4*len_idx];
+    complex64 dM_dd_TM_oo[4*len_idx];
+    std::complex<double> n_ii[len_d];
+    int ind = 0;
+    int ind1 = 0;
+    int ind2 = 0;
+    int ind1_glob = 0;
+    int ind2_glob = 0;
+
+    for(int i=0; i<len_sim; ++i) {
+        for(int j=0; j<len_d; ++j) {
+            ind = 2*i+j;
+            n_ii[j] = n_i[ind];
+        }
+        
+        solve(photon_energy[i], 
+              theta[i], 
+              len_d, 
+              len_idx,
+              d_i, 
+              n_ii, 
+              idx_i, 
+              M_TE_oo,
+              M_TM_oo,
+              dM_dd_TE_oo,
+              dM_dd_TM_oo);
+         
+        for(int m=0; m<2; ++m) {
+            for(int n=0; n<2; ++n) {
+                ind1 = m*2+n;
+                ind1_glob = i*4+ind1;
+                M_TE_o[ind1_glob] = M_TE_oo[ind1]
+                M_TM_o[ind1_glob] = M_TM_oo[ind1]
+                for(int o=0; o<len_idx; ++o) {
+                    ind2 = len_idx*2*m + len_idx*n + o;
+                    ind2_glob = i*4*len_idx + ind2;
+                    dM_dd_TE_o[ind2_glob] = dM_dd_TE_oo[ind2]
+                    dM_dd_TM_o[ind2_glob] = dM_dd_TM_oo[ind2]
+                }
+
+            }
+        }
+    }
+};
