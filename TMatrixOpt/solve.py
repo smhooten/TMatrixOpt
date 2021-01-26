@@ -1,7 +1,38 @@
 """
-Module that manages layers, pulls their params, solves the T-Matrix
+TMatrixOpt: A fast and modular transfer-matrix optimization package 
+for 1D optical devices.
+Copyright (C) 2021 Sean Hooten & Zunaid Omair
+
+TMatrixOpt/solve.py
+
+This module is the mainstay of TMatrixOpt
+The TMatrix class manages layers, pulls their parameters, solves the T-Matrix
 system, provides gradients to the user, and updates the T-Matrix geometry.
+
+The user is expected to inherit TMatrix and define the following methods:
+    def input_func();
+    def calc_fom(self, **results);
+    def calc_grads(self, **results);
+See "OVERRIDEABLE METHODS" below.
+
+By doing so, the user can define custom overall merit functions for
+optimization, e.g. average reflectivity of a DBR. See examples/bragg_mirror
+for a detailed example.
+
+If only "forward calculations" are needed (i.e. no gradients required),
+the user can override calc_grads in the following way:
+    def calc_grads(self):
+        pass
+Make sure to use the fom_foward() convenience method to perform this 
+calculation. See examples/simple_forward_calculation for a detailed example. 
+
+Additional convenience methods are defined below under
+header "USER CONVENIENCE FUNCTIONS"
 """
+
+__author__ = 'Sean Hooten'
+__version__ = '1.0'
+__license__ = 'GPL 3.0'
 
 from abc import ABCMeta, abstractmethod
 import copy
@@ -12,7 +43,7 @@ import inspect
 import TMatrixOpt
 from .parallel_toolkit import MPI, COMM, RANK, SIZE, \
                               parallel_partition, parallel_partition2, \
-                              run_on_master, MathDummy
+                              run_on_master
 from .physical_constants import *
 from .geometry import Geometry, Material
 import TMatrixOpt.fomutils as fomutils
@@ -72,7 +103,7 @@ class TMatrix:
             self.__fom_class = None
         else:
             Exception('Not an acceptable fom setting. Use "Custom", or one of the classes \
-                       defined in fomutils.py')
+                       defined in merit_functions.py')
 
         self.__return_results = dict.fromkeys(return_results, [])
         self.__return_results_keys = return_results

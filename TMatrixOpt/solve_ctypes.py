@@ -1,3 +1,7 @@
+"""
+ctypes interface to access c++ source files
+"""
+
 from ctypes import *
 import os
 import numpy as np

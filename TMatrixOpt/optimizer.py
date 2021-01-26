@@ -1,3 +1,26 @@
+"""
+TMatrixOpt: A fast and modular transfer-matrix optimization package 
+for 1D optical devices.
+Copyright (C) 2021 Sean Hooten & Zunaid Omair
+
+TMatrixOpt/optimizer.py
+
+ATTN: This module is a redistributed and modified version (under the
+GNU General Public License, Version 3.0) of a similar module 
+from EMopt, copyright Andrew Michaels, which may be found here:
+    https://github.com/anstmichaels/emopt.git
+
+This module is a wrapper around scipy.optimize.minimize allowing
+the user to easily invoke conventional gradient-based optimization
+methods. The Optimizer manages MPI communication automatically,
+allowing for parallelized calculation of a merit function and
+its gradient.
+"""
+
+__author__ = 'Andrew Michaels, Sean Hooten'
+__version__ = '1.0'
+__license__ = 'GPL 3.0'
+
 import numpy as np
 from math import pi
 from abc import ABCMeta, abstractmethod
@@ -147,6 +170,7 @@ class Optimizer:
         self._comm.bcast(command, root=0)
 
         return result.fun, result.x
+
 
 class basin_hopping(Optimizer):
     def __init__(self, am, p0, callback_func=None, opt_method='BFGS', \

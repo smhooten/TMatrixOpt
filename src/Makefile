@@ -1,3 +1,6 @@
+# This Makefile was modified from similar code in EMopt:
+# https://github.com/anstmichaels/emopt.git
+
 UNAME := $(shell uname)
 EIGEN_DIR := $(shell pwd)/eigen
 

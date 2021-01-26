@@ -1,9 +1,22 @@
 """
+TMatrixOpt: A fast and modular transfer-matrix optimization package 
+for 1D optical devices.
+Copyright (C) 2021 Sean Hooten & Zunaid Omair
+
+TMatrixOpt/geometry.py
+
 Module for defining geometry objects that are compatible with the TMatrix
 solver. Each geometry object should inherit from the Geometry class. The
 class should have at least 5 methods that override the abstract methods
 of the Geometry class given below.
+
+THIS MODULE IS CURRENTLY UNDER CONSTRUCTION
 """
+
+__author__ = 'Sean Hooten'
+__version__ = '1.0'
+__license__ = 'GPL 3.0'
+
 from abc import ABCMeta, abstractmethod
 import csv
 import copy

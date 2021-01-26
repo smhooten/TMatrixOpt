@@ -1,3 +1,7 @@
+"""
+Documentation in development!
+"""
+
 import numpy as np
 import TMatrixOpt
 from TMatrixOpt import geometry, optimizer, solve, fomutils, solve

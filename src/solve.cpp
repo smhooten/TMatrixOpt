@@ -1,3 +1,19 @@
+/*
+
+TMatrixOpt: A fast and modular transfer-matrix optimization package 
+for 1D optical devices.
+Copyright (C) 2021 Sean Hooten & Zunaid Omair
+
+TMatrixOpt/solve.cpp
+
+Solves transfer matrix and provies gradients
+
+Authors: Sean Hooten, Zunaid Omair
+Version: 1.0
+License: GPL 3.0 
+
+*/
+
 #include "solve.hpp"
 #include <Eigen/Core> 
 #include <Eigen/Dense> 

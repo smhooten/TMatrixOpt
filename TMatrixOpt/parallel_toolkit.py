@@ -1,6 +1,22 @@
 """
+TMatrixOpt: A fast and modular transfer-matrix optimization package 
+for 1D optical devices.
+Copyright (C) 2021 Sean Hooten & Zunaid Omair
+
+TMatrixOpt/parallel_toolkit.py
+
+ATTN: This module contains redistributed and modified code (under the
+GNU General Public License, Version 3.0) from EMopt, 
+copyright Andrew Michaels, which may be found here:
+    https://github.com/anstmichaels/emopt.git
+
 Module that provides useful tools for implementing parallel MPI operations.
 """
+
+__author__ = 'Sean Hooten'
+__version__ = '1.0'
+__license__ = 'GPL 3.0'
+
 import numpy as np
 from mpi4py import MPI
 
@@ -48,7 +64,7 @@ def parallel_partition2(rank, num_sims):
 def run_on_master(func):
     """
     AUTHOR CREDIT: Andrew Michaels
-    See license given in head directory for emopt
+    See header above
 
     Function decorator that will cause the function to only run on the
     head node, return None on the worker nodes.
@@ -100,79 +116,3 @@ def get_axis(m, axis, start, end):
     slc = [slice(None)] * len(m.shape)
     slc[axis] = slice(start, end)
     return m[slc]
-
-
-class MathDummy(np.ndarray):
-    """
-    AUTHOR CREDIT: Andrew Michaels
-    See license given in head directory for emopt
-
-    Define a MathDummy.
-
-    A MathDummy is an empty numpy.ndarray which devours all mathematical
-    operations done by it or on it and just spits itself back out. This is
-    used by emopt in order simplify its interface in the presence of MPI. For
-    example, in many instances, you will need to calculate a quantity which
-    need only be known on the master node, however the function performing the
-    computation will be run on all nodes. Rather than having to worry about
-    putting in if(NOT_PARALLEL) statements everywhere, we can just sneakily
-    replace quantities involved in the calculation with MathDummies on all
-    nodes but the master node.  You can then do any desired calculations
-    without worying about what's going on in the other nodes.
-    """
-    def __new__(cls):
-        obj = np.asarray([]).view(cls)
-        return obj
-
-    def __add__(self, other): return self
-    def __sub__(self, other): return self
-    def __mul__(self, other): return self
-    def __matmul__(self, other): return self
-    def __truediv__(self, other): return self
-    def __floordiv__(self, other): return self
-    def __mod__(self, other): return self
-    def __divmod__(self, other): return self
-    def __pow__(self, other, modulo=2): return self
-    def __lshift__(self, other): return self
-    def __rshift__(self, other): return self
-    def __and__(self, other): return self
-    def __xor__(self, other): return self
-    def __or__(self, other): return self
-    def __radd__(self, other): return self
-    def __rsub__(self, other): return self
-    def __rmul__(self, other): return self
-    def __rmatmul__(self, other): return self
-    def __rtruediv__(self, other): return self
-    def __rfloordiv__(self, other): return self
-    def __rmod__(self, other): return self
-    def __rdivmod__(self, other): return self
-    def __rpow__(self, other): return self
-    def __rlshift__(self, other): return self
-    def __rrshift__(self, other): return self
-    def __rand__(self, other): return self
-    def __rxor__(self, other): return self
-    def __ror__(self, other): return self
-    def __iadd__(self, other): return self
-    def __isub__(self, other): return self
-    def __imul__(self, other): return self
-    def __imatmul__(self, other): return self
-    def __itruediv__(self, other): return self
-    def __ifloordiv__(self, other): return self
-    def __imod__(self, other): return self
-    def __ipow__(self, other, modulo=2): return self
-    def __ilshift__(self, other): return self
-    def __irshift__(self, other): return self
-    def __iand__(self, other): return self
-    def __ixor__(self, other): return self
-    def __ior__(self, other): return self
-    def __neg__(self): return self
-    def __pos__(self): return self
-    def __abs__(self): return self
-    def __invert__(self): return self
-    def __complex__(self): return self
-    def __int__(self): return self
-    def __float__(self): return self
-    def __round__(self, n): return self
-    def __index__(self): return 0
-    def __getitem__(self, key): return self
-    def __setitem__(self, key, value): return self

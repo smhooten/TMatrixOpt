@@ -1,3 +1,44 @@
+"""
+TMatrixOpt: A fast and modular transfer-matrix optimization package 
+for 1D optical devices.
+Copyright (C) 2021 Sean Hooten & Zunaid Omair
+
+TMatrixOpt/merit_functions.py
+
+TMatrixOpt by default can return all Fresnel coefficients
+to the user, as well as derivatives of the matrix elements of the
+transfer matrix system. This can be inconvenient to a user who's
+overall merit function is only related to, for example, the 
+reflection/transmission fractions of power. 
+
+This module provides a convenient intermediate layer between the raw 
+output of TMatrixOpt and the user who may only be interested in an
+average over structure reflectivity, for example. As mentioned in 
+TMatrixOpt/solve.py, the user needs to override the calc_fom and
+calc_grads methods of the TMatrix base class. By initializing 
+TMatrix specifiying one of these classes, e.g.,
+    super().__init__(fom_setting='Reflectivity')
+The user then need only define their calc_fom method with the 
+signature,
+    calc_fom(RTE, RTM)
+where RTE and RTM are the power coefficients of reflectivity for TE (s) 
+and TM (p) polarized light respectively defined over all input
+photon energies and angles of incidence specified by the user from
+the input_func method.
+
+Using one of these intermediary is classes is not necessary. If the
+user desires to use the Fresnel coefficients or transfer matrix
+elements directly, the user may initialize the TMatrix class with
+the 'Custom' fom_setting. See examples/lumerical_comparison for
+an example of this. Moreover, one may define their own custom
+intermediary merit function class here, it need only inherit the
+MeritFunction base class below and override the abstract methods.
+"""
+
+__author__ = 'Sean Hooten'
+__version__ = '1.0'
+__license__ = 'GPL 3.0'
+
 from abc import ABCMeta, abstractmethod
 import numpy as np
 
@@ -28,6 +69,14 @@ class MeritFunction:
         pass
 
 class Reflectivity(MeritFunction):
+    """
+    Simplifies optimizations over the structure
+    power coefficient of reflectivity for TE and TM
+    polarized light.
+
+    User function signatures of calc_fom and calc_grads
+    are defined below.
+    """
     return_results = ['rTE',
                       'rTM',
                       'tTE',
@@ -62,6 +111,14 @@ class Reflectivity(MeritFunction):
     # def calc_grads(dRTE_dp, dRTM_dp)
 
 class Reflectivity_FORWARD_ONLY(MeritFunction):
+    """
+    If the user only needs to perform a forward calculation
+    of reflectivity (i.e. no gradients required), the user
+    may use this convenience class.
+
+    User function signatures of calc_fom and calc_grads
+    are defined below.
+    """
     return_results = ['rTE',
                       'rTM']
 
@@ -78,18 +135,34 @@ class Reflectivity_FORWARD_ONLY(MeritFunction):
     def calc_grads():
         pass
 
+    # USER FUNCTION SIGNATURE SHOULD BE
+    # def calc_grads():
+    #     pass
 
 
-### CURRENTLY NOT WORKING BELOW ###
 class Transmission(MeritFunction):
+    """
+    Simplifies optimizations over the structure
+    power coefficient of reflectivity for TE and TM
+    polarized light.
+
+    CAUTION: This should only be used with lossless
+    (i.e. noncomplex refractive index) structures.
+    Lossy structures are a bit more involved, and transmission
+    cannot necessarily be calculated without additional
+    information provided by the user.
+    Providing a general framework for transmission is in
+    development. For now, if a demonstration of calculating
+    transmission for a lossy structure is needed, please see
+    examples/lumerical_comparison/lumerical_comparison.py
+
+    User function signatures of calc_fom and calc_grads
+    are defined below.
+    """
     return_results = ['rTE',
                       'rTM',
-                      'tTE',
-                      'tTM',
                       'dM11_dp_TE',  
-                      'dM11_dp_TM',  
-                      'dM21_dp_TE',  
-                      'dM21_dp_TM']
+                      'dM11_dp_TM']
 
     @staticmethod
     def calc_fom(rTE, rTM):
@@ -114,6 +187,9 @@ class Transmission(MeritFunction):
 
     # USER FUNCTION SIGNATURE SHOULD BE
     # def calc_grads(dTTE_dp, dTTM_dp)
+
+
+# Some additional convenience functions below
 
 def GaAsAbsorpCoeff(E):
     # inputs

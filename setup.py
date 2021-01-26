@@ -5,16 +5,15 @@ with open("README.md", 'r') as f:
 
 setup(
    name='TMatrixOpt',
-   version='0.1',
+   version='1.0',
    description='T-Matrix based adjoint-method optimizer',
-   license="BSD-3-Clause",
+   license="GNU GPL 3.0",
    long_description=long_description,
-   author='Sean Hooten',
+   author='Sean Hooten, Zunaid Omair',
    author_email='shooten@eecs.berkeley.edu',
    url="https://github.com/smhooten/TMatrixOpt",
    packages=['TMatrixOpt'],
    package_data={'TMatrixOpt':['*.so']},
-   #install_requires=['numpy', 'scipy'],
    zip_safe=False,
 )
 

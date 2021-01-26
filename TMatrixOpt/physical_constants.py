@@ -1,3 +1,10 @@
+"""
+TMatrixOpt/physical_constants.py
+
+Simple physical constant definitions, also
+define the solver precision here.
+"""
+
 import numpy as np
 from math import pi
 
