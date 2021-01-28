@@ -3,37 +3,71 @@ TMatrixOpt (transfer matrix optimizer) is an electromagnetic solver capable of s
 
 The utility of TMatrixOpt is best illustrated with an example. Consider the following distributed Bragg reflector with 10 (total) alternating silicon (n=3.5) and silica (n=1.4) layers, floating in vacuum:
 
+   |                     ^
+
+   |                     |
+
+   | Incident Light      | Reflected Light
+
+   |                     |
+
+   v                     |
+
 Vacuum (0nm for boundary condition, fixed)
+
 \---------------------------------------
+
 Si (variable thickness)
+
 \---------------------------------------
+
 SiO2 (variable thickness)
+
 \---------------------------------------
+
 Si (variable thickness)
+
 \---------------------------------------
+
 SiO2 (variable thickness)
+
 \---------------------------------------
+
 Si (variable thickness)
+
 \---------------------------------------
+
 SiO2 (variable thickness)
+
 \---------------------------------------
+
 Si (variable thickness)
+
 \---------------------------------------
+
 SiO2 (variable thickness)
+
 \---------------------------------------
+
 Si (variable thickness)
+
 \---------------------------------------
+
+
 SiO2 (variable thickness)
+
 \---------------------------------------
+
+
 Vacuum (0nm for boundary condition, fixed)
 
 Using TMatrixOpt, we can easily optimize the thicknesses of each of these layers to maximize the average reflectivity over a desired bandwidth. In this case, we choose both a large frequency bandwidth and incident angle bandwidth of [0.1eV, 0.75eV] and [0.0 degrees, 90 degrees] respectively. The initial thicknesses are chosen to reflect normally incident light with energy of 0.45eV. The initial reflectivity spectra (both TE and TM incident light) are given here:
 
-![initial](https://github.com/smhooten/TMatrixOpt/blob/master/readme_images/10-Layer-Mirror_Initial_Reflectivity.pdf?raw=true)
+![initial](https://github.com/smhooten/TMatrixOpt/blob/master/readme_images/10-Layer-Mirror_Initial_Reflectivity.png?raw=true)
 
 which has an average reflectivity of approximately 70%. After optimization with TMatrixOpt, the reflectivity profile improves dramatically:
 
-![final](https://github.com/smhooten/TMatrixOpt/blob/master/readme_images/10-Layer-Mirror_Final_Reflectivity.pdf?raw=true)
+![final](https://github.com/smhooten/TMatrixOpt/blob/master/readme_images/10-Layer-Mirror_Final_Reflectivity.png?raw=true)
 
 The optimized structure greatly extends the reflectivity bandwidth, with overall average reflectivity increasing to approximately 90%.
 
@@ -46,7 +80,7 @@ The modularity of TMatrixOpt allows one to simulate any desired 1D structure tha
 
 The speed of TMatrixOpt is enabled by MPI (message passing interface) which allows ease of invoking parallelized operations. Consider the example given in examples/lumerical\_comparison. As the name implies, the speed of TMatrixOpt is compared to the speed of the built-in transfer-matrix solver of Lumerical, a commercial photonic software. Using MPI, we can quickly simulate (for example) a 1D lossy, linearly-chirped distributed Bragg reflector with very fine incident angle and photon energy resolution. The angular and photon energy resolution are [0 degrees, 90 degrees, 0.125 degree spacing] and [0.1 eV, 0.74 eV, 0.0001 eV spacing] respectively. This constitutes over 4.2 million transfer matrix evaluations in total. The time required to solve this system versus number of MPI nodes is shown below (compared to the speed of Lumerical):
 
-![mpi](https://github.com/smhooten/TMatrixOpt/blob/master/readme_images/10-Layer-Mirror_Final_Reflectivity.pdf?raw=true)
+![mpi](https://github.com/smhooten/TMatrixOpt/blob/master/readme_images/10-Layer-Mirror_Final_Reflectivity.png?raw=true)
 
 Notably, Lumerical is faster for single-CPU operation, but TMatrixOpt outperforms Lumerical with MPI (with solve times of 76s and ~18s for Lumerical and TMatrixOpt with 28 MPI nodes respectively). The saturation of simulation time is a result of the increased computation and memory overhead for using MPI. High-performance servers (such as HPC) would likely offer even further improvement for large problems.
 

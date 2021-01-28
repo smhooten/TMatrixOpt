@@ -254,7 +254,8 @@ class LayerStack(TMatrix):
 
         #plt.show()
         #plt.savefig('10-Layer-Mirror_Final_Reflectivity.pdf')
-        plt.savefig('10-Layer-Mirror_Initial_Reflectivity.pdf')
+        #plt.savefig('10-Layer-Mirror_Initial_Reflectivity.png')
+        plt.savefig('10-Layer-Mirror_Final_Reflectivity.png')
 
 if __name__ == '__main__':
     """
@@ -267,9 +268,9 @@ if __name__ == '__main__':
 
     data = scipy.io.loadmat('results.mat')
     ds = data['ds']
-    ds_init = ds[0,1:-1].squeeze()
+    #ds_init = ds[0,1:-1].squeeze()
     #ds_final = ds[-1,1:-1].squeeze()
-    #ds_init = ds[-1,1:-1].squeeze()
+    ds_init = ds[-1,1:-1].squeeze()
 
     # We define the material refractive index values.
     # The solver supports complex materials.
