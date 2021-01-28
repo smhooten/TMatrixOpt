@@ -182,12 +182,13 @@ if __name__ == '__main__':
 
     # We build a linearly chirped Bragg mirror
     air_front = geometry.Layer('air_front', 0.0, nair, False)
-    discretechirp = geometry.LinearChirp('linearchirp',0.2, 0.6, 5, nsi, nsio2, 3.5, 1.4, False)
+    discretechirp = geometry.LinearChirp('discretechirp',0.2, 0.6, 5, nsi, nsio2, 3.5, 1.4, False)
     air_back = geometry.Layer('air_back', 0.0, nair, False)
     layers = [air_front, discretechirp, air_back]
    
     # Relatively high resolution for calculation, to easily compare total time
     photon_energies = np.linspace(0.1, 0.74, num=6401)
+    #thetas = np.linspace(0,90, num=361)
     thetas = np.linspace(0,90, num=721)
     stack = LayerStack(photon_energies, thetas, layers)
     stack.build()
@@ -199,6 +200,7 @@ if __name__ == '__main__':
 
     if(RANK==0):
         # Plot and print results
-        print('time:', end-start)
-        stack.print_info()
-        stack.plot_fom()
+        #print('time:', end-start)
+        print(end-start)
+        #stack.print_info()
+        #stack.plot_fom()

@@ -1,7 +1,7 @@
 matlab("disp('init matlab')");
 
 pe = linspace(0.1, 0.74, 6401);
-ia = linspace(0.0, 90.0, 361);
+ia = linspace(0.0, 90.0, 721);
 
 f = pe*e/h;
 
@@ -19,8 +19,8 @@ d = [0.00000000e+00;
     0.00000000e+00];
 
 nair = 1.0;
-nsio2 = 1.4+1i*0.05;
-nsi = 3.5+1i*0.05;
+nsio2 = 1.4+1i*0.005;
+nsi = 3.5+1i*0.005;
 
 n = [nair;
      nsi;

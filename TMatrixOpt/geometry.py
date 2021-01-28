@@ -343,6 +343,56 @@ class DiscreteChirp0(Geometry):
     def get_layer_gradient(self, dM_dd):
         return dM_dd
 
+class BraggReflector0(Geometry):
+    """
+    A binarized Bragg Layer with Np pairs. Provide a center energy (in eV),
+    refractive indices (n1, n2 -- possibly dispersive), and center refractive 
+    indices (cen_n1, cen_n2 -- must be type float). Each design parameter updates 
+    the layer thicknesses individually.
+    """
+    def __init__(self, name, cen_energy, Np, n1, n2, cen_n1, cen_n2, designable):
+        super().__init__(name)
+        self.cen_energy = cen_energy
+        self.Np = Np
+        self.designable = designable
+        self.n1 = n1
+        self.n2 = n2
+        self.num_params = 2*Np
+
+        M = h*c/(4.0*cen_energy*q)
+        d1 = M/cen_n1
+        d2 = M/cen_n2
+        
+        layers = []
+        for i in range(Np):
+            layers.append(Layer0(self.name+'_Np1_'+str(i), d1, n1, designable))
+            layers.append(Layer0(self.name+'_Np2_'+str(i), d2, n2, designable))
+
+        self.layers = layers
+
+    def print_info(self):
+        print('Discrete Chirp: %s' % self.name)
+        for i in range(2*self.Np):
+            self.layers[i].print_info()
+
+    def get_params(self):
+        d = []
+        n = []
+        designable = []
+        for i in range(2*self.Np):
+            d.append(self.layers[i].d)
+            n.append(self.layers[i].n)
+            designable.append(self.designable)
+        return d, n, designable, self.num_params
+
+    def update(self, params):
+        for j in range(len(self.layers)):
+            layer = self.layers[j]
+            layer.update(params[j])
+
+    def get_layer_gradient(self, dM_dd):
+        return dM_dd
+
 class LinearChirp(Geometry):
     """
     A binarized linearly chirped Bragg Layer with Np pairs. Provide a starting and

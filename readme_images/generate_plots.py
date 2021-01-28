@@ -116,7 +116,7 @@ class LayerStack(TMatrix):
     """
     def __init__(self, photon_energies, thetas, layers, TM_weight=0.5):
         # initialize TMatrix
-        super().__init__()
+        super().__init__(fom_setting='Reflectivity_FORWARD_ONLY')
 
         # Assumes that user provides photon energy in eV and angles in degrees. We must
         # convert to SI units:
@@ -197,27 +197,7 @@ class LayerStack(TMatrix):
         
 
     def calc_grads(self, dRTE_dp, dRTM_dp):
-        # THIS IS A REQUIRED METHOD
-        # For reflectivity calculations it must have function signature calc_grads(self, dRTE_dp, dRTM_dp)
-        # For different types of calculations, different function signature would be needed.
-        #
-        # Note that dRTE_dp has shape (len(pe), len(ia), total number of parameters)
-        # Note that dRTM_dp has shape (len(pe), len(ia), total number of parameters)
-        #
-        # NOTE: This method only runs on the master node
-
-        # We evaluate Eq.(2) from above.
-        TM_weight = self.TM_weight
-
-        int1_TE = np.trapz(dRTE_dp*self.wse*self.wsa, x=self.photon_energies, axis=0)
-        int2_TE = np.trapz(int1_TE, x=self.thetas, axis=0)
-
-        int1_TM = np.trapz(dRTM_dp*self.wse*self.wsa, x=self.photon_energies, axis=0)
-        int2_TM = np.trapz(int1_TM, x=self.thetas, axis=0)
-
-        dRtot_dp = ((1.0-TM_weight) * int2_TE + TM_weight * int2_TM) / (self.denominator1 * self.denominator2)
-
-        return -1*dRtot_dp # Take the negative (optimization assumes a minimization problem)
+        pass
 
     def energy_weighting_func(self, Ep, T=1473.0):
         # Planck spectrum with photon energy Ep and temperature T
@@ -231,20 +211,20 @@ class LayerStack(TMatrix):
 
     def plot_fom(self):
         # Plot the layer thicknesses tracked over the optimization
-        ds = np.array(self.ds_tracker)
+        #ds = np.array(self.ds_tracker)
         import matplotlib.pyplot as plt
-        f1 = plt.figure()
-        ax1 = f1.add_subplot(111)
-        ax1.plot(ds*1e6)
-        ax1.set_xlabel('Iteration')
-        ax1.set_ylabel('Layer Thicknesses(um)')
-        
-        # Plot the foms tracked over the optimization
-        f2 = plt.figure()
-        ax2 = f2.add_subplot(111)
-        ax2.plot(self.fom_tracker)
-        ax2.set_xlabel('Iteration')
-        ax2.set_ylabel('Average Reflectivity')
+        #f1 = plt.figure()
+        #ax1 = f1.add_subplot(111)
+        #ax1.plot(ds*1e6)
+        #ax1.set_xlabel('Iteration')
+        #ax1.set_ylabel('Layer Thicknesses(um)')
+        #
+        ## Plot the foms tracked over the optimization
+        #f2 = plt.figure()
+        #ax2 = f2.add_subplot(111)
+        #ax2.plot(self.fom_tracker)
+        #ax2.set_xlabel('Iteration')
+        #ax2.set_ylabel('Average Reflectivity')
 
         # Plot the final RTE and RTM arrays
         pe, ia = self.input_func()
@@ -253,22 +233,28 @@ class LayerStack(TMatrix):
         ia1 = ia[0]*180.0/np.pi
         ia2 = ia[-1]*180.0/np.pi
 
-        f3 = plt.figure()
+        f3 = plt.figure(figsize=(12,6))
         ax3 = f3.add_subplot(121)
-        im3 = ax3.imshow(self.RTE, extent=[ia1, ia2, pe1, pe2], aspect='auto', origin='lower', cmap='plasma', vmin=0.0, vmax=1.0)
+        im3 = ax3.imshow(100*self.RTE, extent=[ia1, ia2, pe1, pe2], aspect='auto', origin='lower', cmap='gnuplot2', vmin=0.0, vmax=100.0)
         f3.colorbar(im3)
         ax3.set_xlabel('Incident Angle (degrees)')
         ax3.set_ylabel('Photon Energy (eV)')
-        ax3.set_title('TE Reflectivity')
+        ax3.set_title('TE Reflectivity (%)')
+        ax3.set_xticks(np.linspace(0.0,90.0,num=10))
+        ax3.set_yticks(np.linspace(0.1,0.75,num=14))
 
         ax4 = f3.add_subplot(122)
-        im4 = ax4.imshow(self.RTM, extent=[ia1, ia2, pe1, pe2], aspect='auto', origin='lower', cmap='plasma', vmin=0.0, vmax=1.0)
+        im4 = ax4.imshow(100*self.RTM, extent=[ia1, ia2, pe1, pe2], aspect='auto', origin='lower', cmap='gnuplot2', vmin=0.0, vmax=100.0)
         f3.colorbar(im4)
         ax4.set_xlabel('Incident Angle (degrees)')
         ax4.set_ylabel('Photon Energy (eV)')
-        ax4.set_title('TM Reflectivity')
+        ax4.set_title('TM Reflectivity (%)')
+        ax4.set_xticks(np.linspace(0.0,90.0,num=10))
+        ax4.set_yticks(np.linspace(0.1,0.75,num=14))
 
-        plt.show()
+        #plt.show()
+        #plt.savefig('10-Layer-Mirror_Final_Reflectivity.pdf')
+        plt.savefig('10-Layer-Mirror_Initial_Reflectivity.pdf')
 
 if __name__ == '__main__':
     """
@@ -279,6 +265,12 @@ if __name__ == '__main__':
     # For saving data later:
     import scipy.io
 
+    data = scipy.io.loadmat('results.mat')
+    ds = data['ds']
+    ds_init = ds[0,1:-1].squeeze()
+    #ds_final = ds[-1,1:-1].squeeze()
+    #ds_init = ds[-1,1:-1].squeeze()
+
     # We define the material refractive index values.
     # The solver supports complex materials.
     # If dispersive materials are required, please see TMatrixOpt.geometry
@@ -286,20 +278,30 @@ if __name__ == '__main__':
     nair = 1.0 # air
     nsi = 3.5 # silicon
     nsio2 = 1.4 # silicon dioxide
-    nau = 0.5+11*1j # gold
 
     # See layer stack at top of this script. We define each layer
     # using the TMatrixOpt.geometry module
+    layers = []
     air_front = geometry.Layer('air_front', 0.0, nair, False)
-    designable_layers = geometry.DiscreteChirp('discretechirp', 0.45, 5, nsi, nsio2, nsi, nsio2, True)
-    #metal_back = geometry.Layer('metal_back', 0.5e-6, nau, False)
+
+    for i in range(10):
+        if i%2 == 0:
+            layer = geometry.Layer('layer', ds_init[i], nsi, False)
+        else:
+            layer = geometry.Layer('layer', ds_init[i], nsio2, False)
+        layers.append(layer)
+
     air_back = geometry.Layer('air_back', 0.0, nair, False)
-    #layers = [air_front, designable_layers, metal_back, air_back]
-    layers = [air_front, designable_layers, air_back]
+
+    layers = [air_front] + layers + [air_back]
    
     # We define the desired photon energies and incident angles for calculation
-    photon_energies = np.linspace(0.1, 0.74, num=641)
-    thetas = np.linspace(0,90, num=46)
+    #photon_energies = np.linspace(0.1, 0.8, num=14001)
+    #thetas = np.linspace(0,90, num=901)
+    #photon_energies = np.linspace(0.1, 0.75, num=2601)
+    #thetas = np.linspace(0,90, num=361)
+    photon_energies = np.linspace(0.1, 0.75, num=6501)
+    thetas = np.linspace(0,90, num=460)
 
     # We create the LayerStack
     stack = LayerStack(photon_energies, thetas, layers, TM_weight=0.5)
@@ -309,39 +311,10 @@ if __name__ == '__main__':
 
     # For convenience, we get a vector of parameters with elements equal to the number
     # of designable parameters (in this case, number of variable thickness layers)
-    params = stack.param_vec()
+    #params = stack.param_vec()
 
-    # We can print all info about our layers upon initialization:
-    if RANK==0:
-        stack.print_info()
-
-    # We can quickly check the accuracy of our gradients compared to simple finite
-    # difference. 
-    stack.check_gradient(params, step=2e-10)
-
-    # We define optimization parameters
-    bounds = None
-    callback = lambda p: print(stack.FOM)
-
-    # We use the momentum gradient descent method (defined in TMatrixOpt.optimizer)
-    opt_method = optimizer.momentum_gradient_descent
-    additional_options = {'stepsize':2e-14, 'beta':0.9}
-
-    # We build an Optimizer object
-    opt = optimizer.Optimizer(stack, params, callback_func=callback, opt_method=opt_method, Nmax=500, tol=1e-10, bounds=bounds, scipy_verbose=True, additional_options=additional_options)
-
-    # Run the optimization!
-    fom_final, params_final = opt.run()
+    fom = stack.fom_forward()
 
     # We save our final results, only the main node needs to save this data
     if RANK == 0:
-        ds = stack.ds_tracker
-        foms = stack.fom_tracker
-        to_save = {'foms':foms, 'ds':ds}
-        scipy.io.savemat('results.mat', to_save)
-
-        # Print the final layer info
-        stack.print_info()
-
-        # Plot the results
         stack.plot_fom()
