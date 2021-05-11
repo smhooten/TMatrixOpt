@@ -62,8 +62,7 @@ Acknowledgement: Andrew Michaels
 ### Citation
 If you use this software in your research, please cite:
 
-[1] Z. Omair, S. Hooten, & E. Yablonovitch. Optimized Optics for Highly Efficient Photovoltaic Devices. in 2020 47th IEEE Photovoltaic Specialists Conference (PVSC) 18131815 (2020). doi:10.1109/PVSC45281.2020.9300579.
-
+[1] Z. Omair, S. M. Hooten, and E. Yablonovitch "Broadband mirrors with >99% reflectivity for ultra-efficient thermophotovoltaic power conversion", Proc. SPIE 11722, Energy Harvesting and Storage: Materials, Devices, and Applications XI, 1172208 (12 April 2021); https://doi.org/10.1117/12.2588738.
 ### License
 TMatrixOpt: A modular transfer-matrix optimization package for 1D
 optical devices.
