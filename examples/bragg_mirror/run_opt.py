@@ -255,14 +255,14 @@ class LayerStack(TMatrix):
 
         f3 = plt.figure()
         ax3 = f3.add_subplot(121)
-        im3 = ax3.imshow(self.RTE, extent=[ia1, ia2, pe1, pe2], aspect='auto', origin='lower', cmap='plasma', vmin=0.0, vmax=1.0)
+        im3 = ax3.imshow(self.RTE, extent=[ia1, ia2, pe1, pe2], aspect='auto', origin='lower', cmap='gnuplot2', vmin=0.0, vmax=1.0)
         f3.colorbar(im3)
         ax3.set_xlabel('Incident Angle (degrees)')
         ax3.set_ylabel('Photon Energy (eV)')
         ax3.set_title('TE Reflectivity')
 
         ax4 = f3.add_subplot(122)
-        im4 = ax4.imshow(self.RTM, extent=[ia1, ia2, pe1, pe2], aspect='auto', origin='lower', cmap='plasma', vmin=0.0, vmax=1.0)
+        im4 = ax4.imshow(self.RTM, extent=[ia1, ia2, pe1, pe2], aspect='auto', origin='lower', cmap='gnuplot2', vmin=0.0, vmax=1.0)
         f3.colorbar(im4)
         ax4.set_xlabel('Incident Angle (degrees)')
         ax4.set_ylabel('Photon Energy (eV)')
@@ -321,14 +321,14 @@ if __name__ == '__main__':
 
     # We define optimization parameters
     bounds = None
-    callback = lambda p: print(stack.FOM)
+    callback = lambda p: print('Average Reflectivity: '+str(-stack.FOM))
 
     # We use the momentum gradient descent method (defined in TMatrixOpt.optimizer)
     opt_method = optimizer.momentum_gradient_descent
     additional_options = {'stepsize':2e-14, 'beta':0.9}
 
     # We build an Optimizer object
-    opt = optimizer.Optimizer(stack, params, callback_func=callback, opt_method=opt_method, Nmax=500, tol=1e-10, bounds=bounds, scipy_verbose=True, additional_options=additional_options)
+    opt = optimizer.Optimizer(stack, params, callback_func=callback, opt_method=opt_method, Nmax=250, tol=1e-10, bounds=bounds, scipy_verbose=True, additional_options=additional_options)
 
     # Run the optimization!
     fom_final, params_final = opt.run()
