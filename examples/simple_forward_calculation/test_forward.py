@@ -4,7 +4,7 @@ Documentation in development!
 
 import numpy as np
 import TMatrixOpt
-from TMatrixOpt import geometry, optimizer, solve, fomutils, solve
+from TMatrixOpt import geometry, optimizer, solve, merit_functions
 from TMatrixOpt.solve import TMatrix
 from TMatrixOpt.physical_constants import *
 from TMatrixOpt.parallel_toolkit import RANK, parallel_integral
@@ -62,14 +62,14 @@ class LayerStack(TMatrix):
 
         f = plt.figure()
         ax1 = f.add_subplot(121)
-        im1 = ax1.imshow(self.RTE, origin='lower', cmap='plasma', vmin=0.0, vmax=1.0, extent=extent, aspect='auto')
+        im1 = ax1.imshow(self.RTE, origin='lower', cmap='gnuplot2', vmin=0.0, vmax=1.0, extent=extent, aspect='auto')
         ax1.set_title('TE Reflectivity')
         ax1.set_xlabel('Incident Angle (Degrees)')
         ax1.set_ylabel('Photon Energy (eV)')
         f.colorbar(im1, ax=ax1)
 
         ax2 = f.add_subplot(122)
-        im2 = ax2.imshow(self.RTM, origin='lower', cmap='plasma', vmin=0.0, vmax=1.0, extent=extent, aspect='auto')
+        im2 = ax2.imshow(self.RTM, origin='lower', cmap='gnuplot2', vmin=0.0, vmax=1.0, extent=extent, aspect='auto')
         ax2.set_title('TM Reflectivity')
         ax2.set_xlabel('Incident Angle (Degrees)')
         ax2.set_ylabel('Photon Energy (eV)')

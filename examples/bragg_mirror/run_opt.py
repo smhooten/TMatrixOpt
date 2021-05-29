@@ -52,7 +52,7 @@ the full half plane of incident solid angles.
 # We must import a bunch of things from TMatrixOpt:
 import numpy as np
 import TMatrixOpt
-from TMatrixOpt import geometry, optimizer, fomutils
+from TMatrixOpt import geometry, optimizer, merit_functions
 from TMatrixOpt.solve import TMatrix
 from TMatrixOpt.physical_constants import *
 from TMatrixOpt.parallel_toolkit import RANK, parallel_integral

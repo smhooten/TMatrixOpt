@@ -46,7 +46,8 @@ from .parallel_toolkit import MPI, COMM, RANK, SIZE, \
                               run_on_master
 from .physical_constants import *
 from .geometry import Geometry, Material
-import TMatrixOpt.fomutils as fomutils
+#import TMatrixOpt.fomutils as fomutils
+import TMatrixOpt.merit_functions as merit_functions
 
 from .solve_ctypes import lib
 
@@ -93,8 +94,8 @@ class TMatrix:
         self.__fom = None
         self.__gradient = None
 
-        if fom_setting in dir(fomutils):
-            fom_class = getattr(fomutils, fom_setting)
+        if fom_setting in dir(merit_functions):
+            fom_class = getattr(merit_functions, fom_setting)
             self.__fom_class = fom_class
             return_results = fom_class.return_results
         elif fom_setting == 'Custom':

@@ -27,7 +27,7 @@ CPU operation. However, when using multiple CPUs, TMatrixOpt is faster.
 
 import numpy as np
 import TMatrixOpt
-from TMatrixOpt import geometry, solve, fomutils
+from TMatrixOpt import geometry, solve, merit_functions
 from TMatrixOpt.solve import TMatrix
 from TMatrixOpt.physical_constants import *
 from TMatrixOpt.parallel_toolkit import RANK
